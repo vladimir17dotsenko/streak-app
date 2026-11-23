@@ -1,11 +1,268 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#121722"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="STREAK"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><title>STREAK — Beta 0.2</title><style>
-:root{color-scheme:dark;--bg:#111722;--panel:#1b2432;--panel2:#222e40;--text:#f2f5fb;--muted:#98a6bb;--accent:#8ba5ff;--green:#54c58a;--line:#2e3a4c}*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#101722,#141d2a 55%,#111722);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}.wrap{max-width:850px;margin:auto;padding:22px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:27px;font-weight:900;letter-spacing:3px}.beta{font-size:11px;color:var(--green);border:1px solid #35694f;border-radius:99px;padding:5px 9px}.tag{color:var(--muted);font-size:12px;letter-spacing:1.2px;margin:4px 0 18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:var(--muted);font-size:13px}.big{font-size:28px;font-weight:800;margin:4px 0}.bar{height:10px;border-radius:99px;background:#303c50;overflow:hidden;margin:12px 0 6px}.fill{height:100%;background:linear-gradient(90deg,#738cff,#a1b6ff);width:0%}h2{font-size:18px;margin:0 0 12px}button{border:0;border-radius:12px;background:var(--accent);color:#111827;padding:11px 14px;font-weight:750;cursor:pointer}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#452b35;color:#ffbdc9}button:disabled{opacity:.5;cursor:default}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.task{display:flex;align-items:center;gap:12px;padding:12px;background:var(--panel2);border-radius:13px;margin:8px 0}.task .info{flex:1;min-width:0}.task .name{font-weight:700}.task small{color:var(--muted)}.done{opacity:.6}.done .name{text-decoration:line-through}.xp{font-size:12px;color:#a9bcff;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{height:38px;border-radius:9px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px}.day.completed{background:#2c7858;color:white}.day.today{outline:2px solid var(--accent)}input,select{background:#111925;border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--text);width:100%}.formgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px}.formgrid .full{grid-column:1/-1}.note{font-size:12px;color:var(--muted);line-height:1.5}.footer{color:var(--muted);font-size:12px;text-align:center;margin-top:24px}@media(max-width:560px){.formgrid{grid-template-columns:1fr 1fr}.formgrid .full{grid-column:1/-1}.stats .card{padding:13px}.big{font-size:24px}}
-</style></head><body><main class="wrap"><div class="top"><div class="brand">STREAK</div><div class="beta">BETA 0.2</div></div><div class="tag">ТВОЯ ЖИЗНЬ. ТВОЙ УРОВЕНЬ. ТВОИ ПРАВИЛА.</div>
-<section class="card"><div class="stats"><div><div class="muted">ТЕКУЩАЯ СЕРИЯ</div><div class="big" id="streak">🔥 0 ДНЕЙ</div></div><div><div class="muted">УРОВЕНЬ ИГРОКА</div><div class="big" id="level">УР. 1</div></div></div><div class="bar"><div class="fill" id="progress"></div></div><div class="muted" id="xptext">0 XP · 100 XP до следующего уровня</div></section>
-<section class="card"><h2>⚡ Задания на сегодня</h2><div class="muted" id="summary">Добавь задания ниже, чтобы начать.</div><div id="tasks"></div></section>
-<section class="card"><h2>＋ Добавить задание</h2><form id="addForm"><div class="formgrid"><div class="full"><input id="taskName" maxlength="100" placeholder="Название, например: занятие речью" required></div><div><select id="category"><option>Речь</option><option>Театр</option><option>Чтение</option><option>Учёба</option><option>Активность</option><option>Личное</option><option>Своё</option></select></div><div><select id="reward"><option value="20">20 XP · Лёгкое</option><option value="30" selected>30 XP · Обычное</option><option value="50">50 XP · Сосредоточенность</option><option value="75">75 XP · Испытание</option></select></div><button class="full" type="submit">Добавить задание</button></div></form></section>
-<section class="card"><h2>📅 Активность</h2><div class="grid" id="calendar"></div><div class="note" style="margin-top:10px">Зелёный — день, в котором выполнено хотя бы одно задание. Пропуск сбрасывает серию, но история и опыт сохраняются.</div></section><section class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">🏆 Достижения</h2><button class="secondary" id="reset" type="button">Сбросить прогресс</button></div><p class="muted" id="achievements">Твоё первое достижение ждёт.</p></section><section class="card"><h2>🔔 Напоминания</h2><p class="muted">Чтобы STREAK присылал напоминания на iPhone, сначала добавь его на экран «Домой». Push-уведомления будут активированы после подключения серверной части.</p><button class="secondary" id="notifyInfo" type="button">Как включить уведомления</button><p class="note" id="notifyStatus" style="margin-top:10px">Статус: приложение пока не подключено к push-серверу.</p></section><div class="footer">Бета 0.2 · Данные сохраняются в этом браузере.</div></main>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#121722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="STREAK">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>STREAK — Beta 0.3</title>
+<style>
+:root{color-scheme:dark;--bg:#111722;--panel:#1b2432;--panel2:#222e40;--text:#f2f5fb;--muted:#98a6bb;--accent:#8ba5ff;--green:#54c58a;--line:#2e3a4c}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#101722,#141d2a 55%,#111722);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:850px;margin:auto;padding:22px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:27px;font-weight:900;letter-spacing:3px}.beta{font-size:11px;color:var(--green);border:1px solid #35694f;border-radius:99px;padding:5px 9px}.tag{color:var(--muted);font-size:12px;letter-spacing:1.2px;margin:4px 0 18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:var(--muted);font-size:13px}.big{font-size:28px;font-weight:800;margin:4px 0}.bar{height:10px;border-radius:99px;background:#303c50;overflow:hidden;margin:12px 0 6px}.fill{height:100%;background:linear-gradient(90deg,#738cff,#a1b6ff);width:0%}
+h2{font-size:18px;margin:0 0 12px}button{border:0;border-radius:12px;background:var(--accent);color:#111827;padding:11px 14px;font-weight:750;cursor:pointer}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#452b35;color:#ffbdc9}button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.task{display:flex;align-items:center;gap:12px;padding:12px;background:var(--panel2);border-radius:13px;margin:8px 0}.task .info{flex:1;min-width:0}.task .name{font-weight:700}.task small{color:var(--muted)}.done{opacity:.6}.done .name{text-decoration:line-through}.xp{font-size:12px;color:#a9bcff;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{height:38px;border-radius:9px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px}.day.completed{background:#2c7858;color:white}.day.today{outline:2px solid var(--accent)}
+input,select{background:#111925;border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--text);width:100%}.formgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px}.formgrid .full{grid-column:1/-1}.note{font-size:12px;color:var(--muted);line-height:1.5}.footer{color:var(--muted);font-size:12px;text-align:center;margin-top:24px}
+.authgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.authgrid .full{grid-column:1/-1}.status{padding:10px 12px;border-radius:10px;background:var(--panel2);font-size:13px;color:var(--muted);margin-top:10px}.status.error{color:#ffbdc9}.status.ok{color:#8ce0b4}
+@media(max-width:560px){.formgrid{grid-template-columns:1fr 1fr}.formgrid .full{grid-column:1/-1}.stats .card{padding:13px}.big{font-size:24px}.authgrid{grid-template-columns:1fr}.authgrid .full{grid-column:auto}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top"><div class="brand">STREAK</div><div class="beta">BETA 0.3 · CLOUD</div></div>
+  <div class="tag">ТВОЯ ЖИЗНЬ. ТВОЙ УРОВЕНЬ. ТВОИ ПРАВИЛА.</div>
+
+  <section class="card" id="authCard">
+    <h2>☁️ Облачный аккаунт STREAK</h2>
+    <p class="muted">Создай аккаунт или войди, чтобы хранить задания и прогресс в облаке и открывать их на iPhone и Windows.</p>
+    <form id="authForm">
+      <div class="authgrid">
+        <input class="full" id="email" type="email" autocomplete="email" placeholder="Электронная почта" required>
+        <input class="full" id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Пароль (не менее 6 символов)" required>
+        <button type="submit">Войти</button>
+        <button type="button" class="secondary" id="signup">Создать аккаунт</button>
+      </div>
+    </form>
+    <div id="authStatus" class="status">Сначала войди или создай аккаунт. Данные старой версии останутся в этом браузере до переноса.</div>
+  </section>
+
+  <section class="card" id="appArea" hidden>
+    <div class="row" style="justify-content:space-between">
+      <div><div class="muted">АККАУНТ</div><div id="userEmail" style="font-weight:700;overflow-wrap:anywhere"></div></div>
+      <button class="secondary" id="logout" type="button">Выйти</button>
+    </div>
+    <div id="cloudStatus" class="status">Подключение к облаку…</div>
+  </section>
+
+  <section id="gameArea" hidden>
+    <section class="card"><div class="stats">
+      <div><div class="muted">ТЕКУЩАЯ СЕРИЯ</div><div class="big" id="streak">🔥 0 ДНЕЙ</div></div>
+      <div><div class="muted">УРОВЕНЬ ИГРОКА</div><div class="big" id="level">УР. 1</div></div>
+    </div><div class="bar"><div class="fill" id="progress"></div></div><div class="muted" id="xptext">0 XP · 100 XP до следующего уровня</div></section>
+
+    <section class="card"><h2>⚡ Задания на сегодня</h2><div class="muted" id="summary">Добавь задания ниже, чтобы начать.</div><div id="tasks"></div></section>
+
+    <section class="card"><h2>＋ Добавить задание</h2><form id="addForm"><div class="formgrid">
+      <div class="full"><input id="taskName" maxlength="100" placeholder="Название, например: занятие речью" required></div>
+      <div><select id="category"><option>Речь</option><option>Театр</option><option>Чтение</option><option>Учёба</option><option>Активность</option><option>Личное</option><option>Своё</option></select></div>
+      <div><select id="reward"><option value="20">20 XP · Лёгкое</option><option value="30" selected>30 XP · Обычное</option><option value="50">50 XP · Сосредоточенность</option><option value="75">75 XP · Испытание</option></select></div>
+      <button class="full" type="submit">Добавить задание</button>
+    </div></form></section>
+
+    <section class="card"><h2>📅 Активность</h2><div class="grid" id="calendar"></div><div class="note" style="margin-top:10px">Зелёный — день, в котором выполнено хотя бы одно задание. Пропуск прерывает серию, история и опыт сохраняются.</div></section>
+
+    <section class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">🏆 Достижения</h2><button class="secondary" id="reset" type="button">Сбросить прогресс</button></div><p class="muted" id="achievements">Твоё первое достижение ждёт.</p></section>
+  </section>
+  <div class="footer">STREAK Beta 0.3 · Облачное сохранение · Уведомления будут подключены отдельно</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const key='streak_beta01_data';const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};const dateLabel=d=>new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short'});let data=JSON.parse(localStorage.getItem(key)||'null')||{tasks:[],completed:{},xp:0,lastDone:null,streak:0};function save(){localStorage.setItem(key,JSON.stringify(data));render()}function levelInfo(xp){let level=Math.floor(xp/100)+1;return {level,within:xp%100}}function complete(id){let t=data.tasks.find(x=>x.id===id);if(!t||data.completed[today()]?.includes(id))return;data.completed[today()]??=[];data.completed[today()].push(id);data.xp+=t.xp;let yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);let y=yesterday.toISOString().slice(0,10);if(data.lastDone===today()){}else if(data.lastDone===y)data.streak++;else data.streak=1;data.lastDone=today();save()}function removeTask(id){data.tasks=data.tasks.filter(t=>t.id!==id);Object.values(data.completed).forEach(arr=>{let i=arr.indexOf(id);if(i>=0)arr.splice(i,1)});save()}function render(){let done=data.completed[today()]||[];document.getElementById('streak').textContent='🔥 '+data.streak+' ДНЕЙ';let l=levelInfo(data.xp);document.getElementById('level').textContent='УР. '+l.level;document.getElementById('progress').style.width=l.within+'%';document.getElementById('xptext').textContent=data.xp+' XP · '+(100-l.within)+' XP до следующего уровня';document.getElementById('summary').textContent=data.tasks.length?`${done.length} из ${data.tasks.length} заданий выполнено сегодня.`:'Добавь задания ниже, чтобы начать.';let box=document.getElementById('tasks');box.innerHTML='';data.tasks.forEach(t=>{let isDone=done.includes(t.id);let div=document.createElement('div');div.className='task'+(isDone?' done':'');div.innerHTML=`<div class="info"><div class="name"></div><small></small></div><div class="xp">+${t.xp} XP</div><button class="secondary" ${isDone?'disabled':''}>${isDone?'✓':'Выполнить'}</button><button class="danger" aria-label="Delete task">×</button>`;div.querySelector('.name').textContent=t.name;div.querySelector('small').textContent=t.category;div.querySelectorAll('button')[0].onclick=()=>complete(t.id);div.querySelectorAll('button')[1].onclick=()=>removeTask(t.id);box.appendChild(div)});let cal=document.getElementById('calendar');cal.innerHTML='';let now=new Date();let days=new Date(now.getFullYear(),now.getMonth(),1).getDay();let offset=(days+6)%7;for(let i=0;i<offset;i++){let blank=document.createElement('div');blank.className='day';blank.style.visibility='hidden';cal.appendChild(blank)}let count=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();for(let n=1;n<=count;n++){let d=new Date(now.getFullYear(),now.getMonth(),n).toISOString().slice(0,10);let e=document.createElement('div');e.className='day'+(data.completed[d]?.length?' completed':'')+(d===today()?' today':'');e.textContent=n;cal.appendChild(e)}let ach=[];if(data.streak>=7)ach.push('🔥 Серия 7 дней');if(data.xp>=100)ach.push('⚡ Первый уровень');if(data.xp>=500)ach.push('🏅 Клуб 500 XP');document.getElementById('achievements').textContent=ach.length?ach.join(' · '):'Твоё первое достижение ждёт.'}
-document.getElementById('addForm').onsubmit=e=>{e.preventDefault();let name=document.getElementById('taskName').value.trim();if(!name)return;data.tasks.push({id:Date.now().toString(),name,category:document.getElementById('category').value,xp:+document.getElementById('reward').value});e.target.reset();save()};document.getElementById('reset').onclick=()=>{if(confirm('Удалить весь прогресс и задания?')){data={tasks:[],completed:{},xp:0,lastDone:null,streak:0};save()}};document.getElementById('notifyInfo').onclick=()=>{document.getElementById('notifyStatus').textContent='На iPhone: открой STREAK в Safari → Поделиться → На экран Домой → Добавить. Затем открой установленное приложение. Для реальных уведомлений о невыполненных заданиях нужно подключить push-сервер; одной веб-страницы недостаточно.'};if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}render();
-</script></body></html>
+const SUPABASE_URL = 'https://lhscfjmrvgftvnydjpax.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_xvkwO7-DHjmfuUVhSREj_w_af4hXCiQ';
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const localKey = 'streak_beta01_data';
+let user = null;
+let data = {tasks:[], completed:{}, xp:0, streak:0, lastDone:null};
+let busy = false;
+
+const $ = id => document.getElementById(id);
+const today = () => {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+};
+const dateLabel = d => new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+function setStatus(id, message, kind='') {
+  const el = $(id); el.textContent = message; el.className = 'status'+(kind?' '+kind:'');
+}
+function levelInfo(xp) { return {level:Math.floor(xp/100)+1, within:xp%100}; }
+function completionDays() { return Object.keys(data.completed).filter(d => data.completed[d]?.length).sort(); }
+function calculateStreak() {
+  const days = new Set(completionDays());
+  let cursor = new Date();
+  let key = today();
+  if (!days.has(key)) cursor.setDate(cursor.getDate()-1);
+  let count = 0;
+  while (days.has(cursor.getFullYear()+'-'+String(cursor.getMonth()+1).padStart(2,'0')+'-'+String(cursor.getDate()).padStart(2,'0'))) {
+    count++; cursor.setDate(cursor.getDate()-1);
+  }
+  return count;
+}
+function render() {
+  const done = data.completed[today()] || [];
+  $('streak').textContent = '🔥 '+calculateStreak()+' ДНЕЙ';
+  const l = levelInfo(data.xp);
+  $('level').textContent = 'УР. '+l.level;
+  $('progress').style.width = l.within+'%';
+  $('xptext').textContent = data.xp+' XP · '+(100-l.within)+' XP до следующего уровня';
+  $('summary').textContent = data.tasks.length ? `${done.length} из ${data.tasks.length} заданий выполнено сегодня.` : 'Добавь задания ниже, чтобы начать.';
+  const box = $('tasks'); box.innerHTML = '';
+  data.tasks.forEach(t => {
+    const isDone = done.includes(t.id);
+    const div = document.createElement('div'); div.className = 'task'+(isDone?' done':'');
+    div.innerHTML = '<div class="info"><div class="name"></div><small></small></div><div class="xp"></div><button class="secondary" type="button"></button><button class="danger" type="button" aria-label="Удалить задание">×</button>';
+    div.querySelector('.name').textContent = t.name;
+    div.querySelector('small').textContent = t.category;
+    div.querySelector('.xp').textContent = '+'+t.xp+' XP';
+    div.querySelectorAll('button')[0].textContent = isDone?'✓':'Выполнить';
+    div.querySelectorAll('button')[0].disabled = isDone || busy;
+    div.querySelectorAll('button')[0].onclick = () => completeTask(t.id);
+    div.querySelectorAll('button')[1].onclick = () => removeTask(t.id);
+    box.appendChild(div);
+  });
+  const cal = $('calendar'); cal.innerHTML = '';
+  const now = new Date(); const first = new Date(now.getFullYear(),now.getMonth(),1).getDay(); const offset=(first+6)%7;
+  for(let i=0;i<offset;i++){const blank=document.createElement('div');blank.className='day';blank.style.visibility='hidden';cal.appendChild(blank);}
+  const count = new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  for(let n=1;n<=count;n++){
+    const d = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(n).padStart(2,'0');
+    const e=document.createElement('div');e.className='day'+(data.completed[d]?.length?' completed':'')+(d===today()?' today':'');e.textContent=n;cal.appendChild(e);
+  }
+  const ach=[]; const streak=calculateStreak();
+  if(streak>=7)ach.push('🔥 Серия 7 дней'); if(data.xp>=100)ach.push('⚡ Первый уровень'); if(data.xp>=500)ach.push('🏅 Клуб 500 XP');
+  $('achievements').textContent=ach.length?ach.join(' · '):'Твоё первое достижение ждёт.';
+}
+async function loadCloud() {
+  setStatus('cloudStatus','Загружаем твой прогресс из облака…');
+  const [{data:profile,error:pe},{data:tasks,error:te},{data:completions,error:ce}] = await Promise.all([
+    client.from('profiles').select('xp').eq('id',user.id).maybeSingle(),
+    client.from('tasks').select('id,title,category,xp_reward,is_active').eq('user_id',user.id).eq('is_active',true).order('created_at'),
+    client.from('completions').select('task_id,completed_on,xp_awarded').eq('user_id',user.id)
+  ]);
+  if(pe||te||ce) throw (pe||te||ce);
+  const marker='streak_cloud_migrated_'+user.id;
+  const old=JSON.parse(localStorage.getItem(localKey)||'null');
+  if(!(localStorage.getItem(marker)==='yes') && tasks.length===0 && old && (old.tasks?.length || old.xp>0)) {
+    setStatus('cloudStatus','Переносим задания и историю из этого браузера в облако…');
+    const idMap={};
+    for(const t of old.tasks||[]) {
+      const newId=crypto.randomUUID(); idMap[t.id]=newId;
+      const {error}=await client.from('tasks').insert({id:newId,user_id:user.id,title:t.name,category:t.category||'Своё',duration:15,xp_reward:Number(t.xp)||30,is_active:true});
+      if(error) throw error;
+    }
+    const rows=[];
+    for(const [day,ids] of Object.entries(old.completed||{})) for(const oldId of ids) if(idMap[oldId]) {
+      const task=(old.tasks||[]).find(t=>String(t.id)===String(oldId));
+      rows.push({user_id:user.id,task_id:idMap[oldId],completed_on:day,xp_awarded:Number(task?.xp)||30});
+    }
+    if(rows.length) {
+      const {error}=await client.from('completions').insert(rows);
+      if(error) throw error;
+    }
+    const {error:profileError}=await client.from('profiles').upsert({id:user.id,xp:Number(old.xp)||0});
+    if(profileError) throw profileError;
+    localStorage.setItem(marker,'yes');
+    setStatus('cloudStatus','Старые данные перенесены в облако.','ok');
+    return loadCloudDataOnly();
+  }
+  localStorage.setItem(marker,'yes');
+  data.tasks=(tasks||[]).map(t=>({id:t.id,name:t.title,category:t.category,xp:Number(t.xp_reward)||30}));
+  data.completed={};
+  (completions||[]).forEach(c=>{(data.completed[c.completed_on]??=[]).push(c.task_id);});
+  data.xp=Number(profile?.xp)||0;
+  render();
+  setStatus('cloudStatus','Синхронизация включена. Прогресс хранится в облаке.','ok');
+}
+async function loadCloudDataOnly() {
+  const [{data:profile,error:pe},{data:tasks,error:te},{data:completions,error:ce}] = await Promise.all([
+    client.from('profiles').select('xp').eq('id',user.id).maybeSingle(),
+    client.from('tasks').select('id,title,category,xp_reward,is_active').eq('user_id',user.id).eq('is_active',true).order('created_at'),
+    client.from('completions').select('task_id,completed_on,xp_awarded').eq('user_id',user.id)
+  ]);
+  if(pe||te||ce) throw (pe||te||ce);
+  data.tasks=(tasks||[]).map(t=>({id:t.id,name:t.title,category:t.category,xp:Number(t.xp_reward)||30}));
+  data.completed={}; (completions||[]).forEach(c=>{(data.completed[c.completed_on]??=[]).push(c.task_id);});
+  data.xp=Number(profile?.xp)||0; render();
+  setStatus('cloudStatus','Синхронизация включена. Прогресс хранится в облаке.','ok');
+}
+async function addTask(name,category,xp) {
+  const {data:row,error}=await client.from('tasks').insert({user_id:user.id,title:name,category,duration:15,xp_reward:xp,is_active:true}).select('id,title,category,xp_reward').single();
+  if(error) throw error;
+  data.tasks.push({id:row.id,name:row.title,category:row.category,xp:Number(row.xp_reward)}); render();
+}
+async function completeTask(id) {
+  if(busy) return; const t=data.tasks.find(x=>x.id===id); if(!t || (data.completed[today()]||[]).includes(id)) return;
+  busy=true; render();
+  try {
+    const {error}=await client.from('completions').insert({user_id:user.id,task_id:id,completed_on:today(),xp_awarded:t.xp});
+    if(error) throw error;
+    const nextXp=data.xp+t.xp;
+    const {error:pe}=await client.from('profiles').upsert({id:user.id,xp:nextXp});
+    if(pe) throw pe;
+    data.completed[today()]??=[]; data.completed[today()].push(id); data.xp=nextXp;
+    render(); setStatus('cloudStatus','Задание выполнено — прогресс сохранён в облаке.','ok');
+  } catch(e) { setStatus('cloudStatus','Не удалось сохранить: '+(e.message||'ошибка'),'error'); }
+  finally { busy=false; render(); }
+}
+async function removeTask(id) {
+  if(!confirm('Удалить это задание? История его выполнений тоже будет удалена. Уже полученный XP сохранится.')) return;
+  const {error}=await client.from('tasks').delete().eq('id',id).eq('user_id',user.id);
+  if(error){setStatus('cloudStatus','Ошибка удаления: '+error.message,'error');return;}
+  data.tasks=data.tasks.filter(t=>t.id!==id);
+  Object.values(data.completed).forEach(arr=>{const i=arr.indexOf(id);if(i>=0)arr.splice(i,1);});
+  render();
+}
+async function resetProgress() {
+  if(!confirm('Удалить все задания и историю выполнений? Полученный XP также будет сброшен.')) return;
+  const {error:e1}=await client.from('completions').delete().eq('user_id',user.id);
+  if(e1){setStatus('cloudStatus','Ошибка: '+e1.message,'error');return;}
+  const {error:e2}=await client.from('tasks').delete().eq('user_id',user.id);
+  if(e2){setStatus('cloudStatus','Ошибка: '+e2.message,'error');return;}
+  const {error:e3}=await client.from('profiles').upsert({id:user.id,xp:0});
+  if(e3){setStatus('cloudStatus','Ошибка: '+e3.message,'error');return;}
+  data={tasks:[],completed:{},xp:0,streak:0,lastDone:null};render();
+}
+async function showUser(session) {
+  user=session?.user||null;
+  $('authCard').hidden=!!user; $('appArea').hidden=!user; $('gameArea').hidden=!user;
+  if(!user) return;
+  $('userEmail').textContent=user.email||'Аккаунт STREAK';
+  try { await loadCloud(); }
+  catch(e){setStatus('cloudStatus','Ошибка загрузки данных: '+(e.message||'проверь таблицы и политики доступа'),'error');}
+}
+$('authForm').addEventListener('submit',async e=>{
+  e.preventDefault(); const email=$('email').value.trim(); const password=$('password').value;
+  setStatus('authStatus','Выполняем вход…');
+  const {data:result,error}=await client.auth.signInWithPassword({email,password});
+  if(error){setStatus('authStatus','Не удалось войти: '+error.message,'error');return;}
+  await showUser(result.session);
+});
+$('signup').onclick=async()=>{
+  const email=$('email').value.trim(); const password=$('password').value;
+  if(!email||password.length<6){setStatus('authStatus','Введи почту и пароль длиной не менее 6 символов.','error');return;}
+  setStatus('authStatus','Создаём аккаунт…');
+  const {data:result,error}=await client.auth.signUp({email,password});
+  if(error){setStatus('authStatus','Не удалось создать аккаунт: '+error.message,'error');return;}
+  if(result.session) await showUser(result.session);
+  else setStatus('authStatus','Аккаунт создан. Проверь почту и подтверди адрес, затем вернись сюда и войди.','ok');
+};
+$('logout').onclick=async()=>{await client.auth.signOut();user=null;$('authCard').hidden=false;$('appArea').hidden=true;$('gameArea').hidden=true;setStatus('authStatus','Ты вышел из аккаунта.');};
+$('addForm').onsubmit=async e=>{
+  e.preventDefault(); if(!user)return;
+  const name=$('taskName').value.trim(); if(!name)return;
+  try{await addTask(name,$('category').value,+$('reward').value);e.target.reset();}
+  catch(err){setStatus('cloudStatus','Не удалось добавить задание: '+err.message,'error');}
+};
+$('reset').onclick=resetProgress;
+client.auth.getSession().then(({data,error})=>{if(error){setStatus('authStatus','Ошибка авторизации: '+error.message,'error');return;}showUser(data.session);});
+client.auth.onAuthStateChange((_event,session)=>{if(session && (!user || user.id!==session.user.id)) showUser(session);});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
