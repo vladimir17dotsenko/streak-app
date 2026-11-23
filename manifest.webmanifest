@@ -1,0 +1,11 @@
+{
+  "name": "STREAK — твоя система прокачки",
+  "short_name": "STREAK",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111722",
+  "theme_color": "#121722",
+  "description": "Личные задания, серии, опыт и достижения"
+}
